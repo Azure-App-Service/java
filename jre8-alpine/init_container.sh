@@ -51,6 +51,7 @@ well_known_env_vars=(
     JAVA_VERSION
     WEBSITE_INSTANCE_ID
     _JAVA_OPTIONS
+    CLASSPATH
     )
 for var in "${well_known_env_vars[@]}"
 do
@@ -79,8 +80,9 @@ if [ -n "$APPSETTING_INIT_SCRIPT" ]
 then
     echo Running custom initialization script "$APPSETTING_INIT_SCRIPT"
     source $APPSETTING_INIT_SCRIPT
-    echo Finished running custom initialization script. Exiting.
-    exit
+    initScriptExitCode=$?
+    echo Initialization script exited with code $initScriptExitCode
+    exit $initScriptExitCode
 fi
 
 if [ ! -d /home/site/wwwroot ]
@@ -95,7 +97,17 @@ then
     cp /tmp/webapps/default.jar /home/site/wwwroot/default.jar
     java -Djava.security.egd=file:/dev/./urandom -jar /home/site/wwwroot/default.jar
 else
-    echo Launching app.jar
-    java "$JAVA_OPTS" -jar /home/site/wwwroot/app.jar
+    # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
+    # remote storage to a local folder
+    if [ "$APPSETTING_WEBSITE_LOCAL_CACHE_OPTION" = "Always" ]
+    then               
+        mkdir -p /localcache/site/wwwroot
+        cp /home/site/wwwroot/app.jar /localcache/site/wwwroot/app.jar
+        JAR_PATH=/localcache/site/wwwroot/app.jar
+    else
+        JAR_PATH=/home/site/wwwroot/app.jar
+    fi
+    echo Launching "$JAR_PATH" using JAVA_OPTS="$JAVA_OPTS"
+    java "$JAVA_OPTS" -jar "$JAR_PATH"
 fi
 
