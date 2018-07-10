@@ -108,6 +108,6 @@ else
         JAR_PATH=/home/site/wwwroot/app.jar
     fi
     echo Launching "$JAR_PATH" using JAVA_OPTS="$JAVA_OPTS"
-    java "$JAVA_OPTS" -jar "$JAR_PATH"
+    java $JAVA_OPTS -jar "$JAR_PATH"
 fi
 

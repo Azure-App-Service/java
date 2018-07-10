@@ -96,6 +96,6 @@ then
     java -Djava.security.egd=file:/dev/./urandom -jar /home/site/wwwroot/default.jar
 else
     echo Launching app.jar
-    java "$JAVA_OPTS" -jar /home/site/wwwroot/app.jar
+    java $JAVA_OPTS -jar /home/site/wwwroot/app.jar
 fi
 
