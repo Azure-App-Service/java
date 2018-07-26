@@ -75,7 +75,19 @@ do
 	echo export $export_var=\'`printenv $export_var`\' >> ~/.profile
 done
 
+# If a Start Up file is specified (in the Application Settings blade), it will be passed as an argument.
+if [ ! -z "$1" ]
+then
+    echo Running Startup File "$1"
+    source $1
+    startupFileExitCode=$?
+    echo Startup File exited with code $startupFileExitCode
+    exit $initScriptExitCode
+fi
+
+# ***Soon to be DEPERECATED in favor of Start Up file above
 # If a custom initialization script is defined, run it and exit.
+# ***
 if [ -n "$APPSETTING_INIT_SCRIPT" ]
 then
     echo Running custom initialization script "$APPSETTING_INIT_SCRIPT"
