@@ -12,10 +12,8 @@ Documentation: http://aka.ms/webapp-linux
 EOL
 cat /etc/motd
 
-echo "Setup openrc ..." && openrc && touch /run/openrc/softlevel
-
 echo Starting ssh service...
-rc-service sshd start
+service ssh start
 
 # WEBSITE_INSTANCE_ID will be defined uniquely for each worker instance while running in Azure.
 # During development it may not be defined, in that case  we set WEBSITE_INSTNACE_ID=dev.
