@@ -12,8 +12,9 @@ Documentation: http://aka.ms/webapp-linux
 EOL
 cat /etc/motd
 
+echo "Setup openrc ..." && openrc && touch /run/openrc/softlevel
 echo Starting ssh service...
-service ssh start
+rc-service sshd start
 
 # WEBSITE_INSTANCE_ID will be defined uniquely for each worker instance while running in Azure.
 # During development it may not be defined, in that case  we set WEBSITE_INSTNACE_ID=dev.
@@ -105,7 +106,7 @@ if [ ! -f /home/site/wwwroot/app.jar ]
 then
     echo Launching default.jar    
     cp /tmp/webapps/default.jar /home/site/wwwroot/default.jar
-    java -Djava.security.egd=file:/dev/./urandom -jar /home/site/wwwroot/default.jar
+    java -jar /home/site/wwwroot/default.jar
 else
     # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
     # remote storage to a local folder
