@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/java/jre:8u181-zulu-alpine
-LABEL Azure App Services Container Images <appsvc-images@microsoft.com>
+LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
 ADD default.jar /tmp/webapps/default.jar
 ADD init_container.sh /bin/init_container.sh
