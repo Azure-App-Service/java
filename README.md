@@ -22,7 +22,4 @@ container_ip=IP_OF_THE_DOCKER_CONTAINER
 ssh root@$container_ip -p 2222
 ```
 
-The username is `root` and password is `Docker!`. For detailed documentation, refer https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image.
-
-## Known issues
-Currently, due to line ending issues, building and running on a Windows machine causes issues during the container startup. This will be fixed soon.
+The username is `root` and password is `Docker!`. For detailed documentation, refer https://docs.microsoft.com/en-us/azure/app-service/containers/tutorial-custom-docker-image#connect-to-web-app-for-containers-using-ssh.
