@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/java/jre:8u181-zulu-alpine
+FROM mcr.microsoft.com/java/jre-headless:8u192-zulu-alpine
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
 ADD default.jar /tmp/webapps/default.jar
