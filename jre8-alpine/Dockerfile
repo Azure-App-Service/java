@@ -6,8 +6,8 @@ ADD init_container.sh /bin/init_container.sh
 ADD sshd_config /etc/ssh/
 ENV JAVA_OPTS=""
 ENV _JAVA_OPTIONS -Djava.net.preferIPv4Stack=true
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV JAVA_VERSION 8u181
+ENV JAVA_HOME /usr/lib/jvm/zulu-8-azure-jre-headless_8.33.0.1-8.0.192-linux_musl_x64
+ENV JAVA_VERSION 8u192
 #
 # Enable and conigure SSH:
 #
