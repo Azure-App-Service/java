@@ -1,7 +1,2 @@
-jre8-alpine/parkingpage/.vscode
-jre8-alpine/parkingpage/.gradle
-jre8-alpine/parkingpage/gradle
-jre8-alpine/parkingpage/.mvn
-jre8-alpine/parkingpage/.settings
-jre8-alpine/parkingpage/bin
-jre8-alpine/parkingpage/target
+tmp
+target
