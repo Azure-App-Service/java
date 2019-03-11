@@ -1,3 +1,6 @@
+########################################################
+### ***DO NOT EDIT*** This is an auto-generated file ###
+########################################################
 FROM mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
@@ -21,3 +24,8 @@ RUN apk add --update openssh-server \
 EXPOSE 80 2222
 
 ENTRYPOINT ["/bin/init_container.sh"]
+
+########################################################
+### ***DO NOT EDIT*** This is an auto-generated file ###
+########################################################
+
