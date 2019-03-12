@@ -1,13 +1,15 @@
-FROM mcr.microsoft.com/java/jre-headless:8u192-zulu-alpine
+########################################################
+### ***DO NOT EDIT*** This is an auto-generated file ###
+########################################################
+FROM mcr.microsoft.com/java/jre-headless:8u202-zulu-alpine
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
-ADD default.jar /tmp/webapps/default.jar
-ADD init_container.sh /bin/init_container.sh
-ADD sshd_config /etc/ssh/
+ADD tmp/shared/default.jar /tmp/webapps/default.jar
+ADD tmp/shared/init_container.sh /bin/init_container.sh
+ADD tmp/shared/sshd_config /etc/ssh/
 ENV JAVA_OPTS=""
 ENV _JAVA_OPTIONS -Djava.net.preferIPv4Stack=true
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV JAVA_VERSION 8u181
+
 #
 # Enable and conigure SSH:
 #
@@ -22,3 +24,8 @@ RUN apk add --update openssh-server \
 EXPOSE 80 2222
 
 ENTRYPOINT ["/bin/init_container.sh"]
+
+########################################################
+### ***DO NOT EDIT*** This is an auto-generated file ###
+########################################################
+
