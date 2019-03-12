@@ -1,6 +1,7 @@
 ########################################################
 ### ***DO NOT EDIT*** This is an auto-generated file ###
 ########################################################
+ARG BASE_IMAGE=mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine
 FROM mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 

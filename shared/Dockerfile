@@ -1,3 +1,4 @@
+ARG BASE_IMAGE=__PLACEHOLDER_BASEIMAGE__
 FROM __PLACEHOLDER_BASEIMAGE__
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 

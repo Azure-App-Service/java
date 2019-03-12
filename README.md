@@ -3,11 +3,18 @@
 This repository contains Docker images for Java SE for running on Azure App Service.
 
 ## Build
+Run the following commands in powershell:
+```powershell
+.\scripts\setup.ps1 # On Linux: ./scripts/setup.sh
+cd <directory> # Example: cd java11-alpnie
+docker build --no-cache -t javase .
 ```
-./setup.sh
-cd jr8-alpine
-docker build -t javase .
+To change the base image that is used, you can run:
 ```
+docker build --no-cache [--build-arg BASE_IMAGE=<base image name>] -t javase .
+```
+
+If you are building on Windows, make sure you configure git as follows to avoid CRLF issues: `git config --global core.autocrlf false`
 
 ## Run
 
