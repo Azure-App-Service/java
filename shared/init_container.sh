@@ -38,27 +38,62 @@ eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/
 
 # END: Configure /etc/profile
 
-# If a Start Up file is specified (in the Application Settings blade), it will be passed as an argument.
-if [ ! -z "$1" ]
+# BEGIN: Process startup file / startup command, if any
+
+DEFAULT_STARTUP_FILE=/home/startup.sh
+STARTUP_FILE=
+STARTUP_COMMAND=
+
+# The web app can be configured to run a custom startup command or a custom startup script
+# This custom command / script will be available to us as a param ($1, $2, ...)
+#
+# IF $1 is a non-empty string AND an existing file, we treat $1 as a startup file (and ignore $2, $3, ...)
+# IF $1 is a non-empty string BUT NOT an existing file, we treat $@ (equivalent of $1, $2, ... combined) as a startup command
+# IF $1 is an empty string AND $DEFAULT_STARTUP_FILE exists, we use it as the startup file
+# ELSE, we skip running the startup script / command
+#
+if [ -n "$1" ] # $1 is a non-empty string
 then
-    echo Running Startup File "$1"
-    source $1
-    startupFileExitCode=$?
-    echo Startup File exited with code $startupFileExitCode
-    exit $initScriptExitCode
+    if [ -f "$1" ] # $1 file exists
+    then
+        STARTUP_FILE=$1
+    else
+        STARTUP_COMMAND=$@
+    fi
+elif [ -f $DEFAULT_STARTUP_FILE ] # Default startup file path exists
+then
+    STARTUP_FILE=$DEFAULT_STARTUP_FILE
 fi
 
-# ***Soon to be DEPERECATED in favor of Start Up file above
-# If a custom initialization script is defined, run it and exit.
-# ***
-if [ -n "$APPSETTING_INIT_SCRIPT" ]
+echo STARTUP_FILE=$STARTUP_FILE
+echo STARTUP_COMMAND=$STARTUP_COMMAND
+
+# If $STARTUP_FILE is a non-empty string, we need to run the startup file
+if [ -n "$STARTUP_FILE" ]
 then
-    echo Running custom initialization script "$APPSETTING_INIT_SCRIPT"
-    source $APPSETTING_INIT_SCRIPT
-    initScriptExitCode=$?
-    echo Initialization script exited with code $initScriptExitCode
-    exit $initScriptExitCode
+    echo Running STARTUP_FILE: $STARTUP_FILE
+    source $STARTUP_FILE
+    # Capture the exit code before doing anything else
+    EXIT_CODE=$?
+    echo Finished running startup file \'$STARTUP_FILE\'. Exiting with exit code $EXIT_CODE.
+    exit $EXIT_CODE
+else
+    echo No STARTUP_FILE available.
 fi
+
+if [ -n "$STARTUP_COMMAND" ]
+then
+    echo Running STARTUP_COMMAND: "$STARTUP_COMMAND"
+    $STARTUP_COMMAND
+    # Capture the exit code before doing anything else
+    EXIT_CODE=$?
+    echo Finished running startup command \'$STARTUP_COMMAND\'. Exiting with exit code $EXIT_CODE.
+    exit $EXIT_CODE
+else
+    echo No STARTUP_COMMAND defined.
+fi
+
+# END: Process startup file / startup command, if any
 
 if [ ! -d /home/site/wwwroot ]
 then
