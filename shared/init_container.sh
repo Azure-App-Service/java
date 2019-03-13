@@ -17,6 +17,10 @@ EOL
 cat /etc/motd
 
 echo "Setup openrc ..." && openrc && touch /run/openrc/softlevel
+
+echo Updating /etc/ssh/sshd_config to use PORT $SSH_PORT
+sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
+
 echo Starting ssh service...
 rc-service sshd start
 

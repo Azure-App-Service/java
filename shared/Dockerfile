@@ -2,6 +2,9 @@ ARG BASE_IMAGE=__PLACEHOLDER_BASEIMAGE__
 FROM __PLACEHOLDER_BASEIMAGE__
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
+ENV PORT 80
+ENV SSH_PORT 2222
+
 ADD tmp/shared/default.jar /tmp/webapps/default.jar
 ADD tmp/shared/init_container.sh /bin/init_container.sh
 ADD tmp/shared/sshd_config /etc/ssh/

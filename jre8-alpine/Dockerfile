@@ -5,6 +5,9 @@ ARG BASE_IMAGE=mcr.microsoft.com/java/jre-headless:8u202-zulu-alpine
 FROM mcr.microsoft.com/java/jre-headless:8u202-zulu-alpine
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
+ENV PORT 80
+ENV SSH_PORT 2222
+
 ADD tmp/shared/default.jar /tmp/webapps/default.jar
 ADD tmp/shared/init_container.sh /bin/init_container.sh
 ADD tmp/shared/sshd_config /etc/ssh/
