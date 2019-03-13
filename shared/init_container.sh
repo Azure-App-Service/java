@@ -71,11 +71,15 @@ echo STARTUP_COMMAND=$STARTUP_COMMAND
 # If $STARTUP_FILE is a non-empty string, we need to run the startup file
 if [ -n "$STARTUP_FILE" ]
 then
-    echo Running STARTUP_FILE: $STARTUP_FILE
-    source $STARTUP_FILE
+    TMP_STARTUP_FILE=/tmp/startup.sh
+    echo Copying $STARTUP_FILE to $TMP_STARTUP_FILE
+    # Convert EOL to Unix-style
+    cat $STARTUP_FILE | tr '\r' '\n' > $TMP_STARTUP_FILE
+    echo Running STARTUP_FILE: $TMP_STARTUP_FILE
+    source $TMP_STARTUP_FILE
     # Capture the exit code before doing anything else
     EXIT_CODE=$?
-    echo Finished running startup file \'$STARTUP_FILE\'. Exiting with exit code $EXIT_CODE.
+    echo Finished running startup file \'$TMP_STARTUP_FILE\'. Exiting with exit code $EXIT_CODE.
     exit $EXIT_CODE
 else
     echo No STARTUP_FILE available.
