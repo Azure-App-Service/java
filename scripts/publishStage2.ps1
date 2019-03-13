@@ -19,7 +19,7 @@ function GetImage
 {
    param([string]$repoName, [string]$version, [string]$timestamp)
    
-   $image = $repoName + '/tomcat:' + $version + '_' + $timestamp
+   $image = $repoName + '/java:' + $version + '_' + $timestamp
    
    return $image
 }
@@ -66,7 +66,5 @@ if ($timestamp -eq '0000000000')
     return;
 }
 
-Publish -version '8.5-jre8' -timestamp $timestamp -pushOriginalTag $pushOriginalTag
-Publish -version '9.0-jre8' -timestamp $timestamp -pushOriginalTag $pushOriginalTag
-Publish -version '8.5-java11' -timestamp $timestamp -pushOriginalTag $pushOriginalTag
-Publish -version '9.0-java11' -timestamp $timestamp -pushOriginalTag $pushOriginalTag
+Publish -version '8-jre8' -timestamp $timestamp -pushOriginalTag $pushOriginalTag
+Publish -version '11-java11' -timestamp $timestamp -pushOriginalTag $pushOriginalTag

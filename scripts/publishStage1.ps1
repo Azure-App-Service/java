@@ -10,22 +10,22 @@ function GetImage
 {
     param([string]$version, [string]$timestamp)
 
-    $image = $RepoName + '/tomcat:' + $version + '_' + $timestamp
+    $image = $RepoName + '/java:' + $version + '_' + $timestamp
 
     return $image
 }
 
 function Build
 {
-    param([string]$version, [string]$timestamp)
+    param([string]$directory, [string]$version, [string]$timestamp)
 
     .\scripts\setup.ps1 -version $version
 
     $image = GetImage -version $version -timestamp $timestamp
 
     Write-Host -ForegroundColor Green Building $image
-    Write-Host -ForegroundColor Green docker build --no-cache -t $image $version
-    docker build --no-cache -t $image $version
+    Write-Host -ForegroundColor Green docker build --no-cache -t $image $directory
+    docker build --no-cache -t $image $directory
 }
 
 function Publish
@@ -62,13 +62,9 @@ $utcTime=$localTime.ToUniversalTime()
 
 $timestamp = $utcTime.ToString('yyMMddHHmm')
 
-Build -version '8.5-jre8' -timestamp $timestamp
-Build -version '9.0-jre8' -timestamp $timestamp
-Build -version '8.5-java11' -timestamp $timestamp
-Build -version '9.0-java11' -timestamp $timestamp
+Build -directory 'jre8-alpine' -version '8-jre8' -timestamp $timestamp
+Build -directory 'java11-alpine' -version '11-java11' -timestamp $timestamp
 
-Publish -version '8.5-jre8' -timestamp $timestamp
-Publish -version '9.0-jre8' -timestamp $timestamp
-Publish -version '8.5-java11' -timestamp $timestamp
-Publish -version '9.0-java11' -timestamp $timestamp
+Publish -version '8-jre8' -timestamp $timestamp
+Publish -version '11-java11' -timestamp $timestamp
 
