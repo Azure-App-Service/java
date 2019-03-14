@@ -32,6 +32,22 @@ then
     export WEBSITE_INSTANCE_ID=dev
 fi
 
+# BEGIN: Configure Java / Spring Boot properties
+# Precedence order of properties can be found here: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
+
+SPRING_BOOT_PROPS=
+SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.port=$PORT"
+SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --logging.file=/home/LogFiles/Application/spring.$WEBSITE_INSTANCE_ID.log"
+# Increase the default size so that Easy Auth headers don't exceed the size limit
+SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.max-http-header-size=16384"
+
+echo "Using SPRING_BOOT_PROPS=$SPRING_BOOT_PROPS"
+
+export JAVA_OPTS="$JAVA_OPTS -noverify"
+export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Djava.net.preferIPv4Stack=true"
+
+# END: Configure Java / Spring Boot properties
+
 # BEGIN: Configure /etc/profile
 
 eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
@@ -107,25 +123,12 @@ then
     mkdir -p /home/site/wwwroot
 fi
 
-# BEGIN: Configure Spring Boot properties
-# Precedence order of properties can be found here: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
-
-SPRING_BOOT_PROPS=
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.port=$PORT"
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --logging.file=/home/LogFiles/Application/spring.$WEBSITE_INSTANCE_ID.log"
-# Increase the default size so that Easy Auth headers don't exceed the size limit
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.max-http-header-size=16384"
-
-echo "Using SPRING_BOOT_PROPS=$SPRING_BOOT_PROPS"
-
-# END: Configure Spring Boot properties
-
 # check if app.jar is present and launch it. Otherwise, launch default.jar
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
     echo Launching default.jar    
     cp /tmp/webapps/default.jar /home/site/wwwroot/default.jar
-    java -jar /home/site/wwwroot/default.jar $SPRING_BOOT_PROPS
+    CMD="java -jar /home/site/wwwroot/default.jar $SPRING_BOOT_PROPS"
 else
     # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
     # remote storage to a local folder
@@ -137,7 +140,8 @@ else
     else
         JAR_PATH=/home/site/wwwroot/app.jar
     fi
-    echo Launching "$JAR_PATH" using JAVA_OPTS="$JAVA_OPTS"
-    java $JAVA_OPTS -jar "$JAR_PATH" $SPRING_BOOT_PROPS
+    CMD="java $JAVA_OPTS -jar \"$JAR_PATH\" $SPRING_BOOT_PROPS"
 fi
 
+echo Running command: "$CMD"
+$CMD

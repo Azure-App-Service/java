@@ -11,8 +11,6 @@ ENV SSH_PORT 2222
 ADD tmp/shared/default.jar /tmp/webapps/default.jar
 ADD tmp/shared/init_container.sh /bin/init_container.sh
 ADD tmp/shared/sshd_config /etc/ssh/
-ENV JAVA_OPTS=""
-ENV _JAVA_OPTIONS -Djava.net.preferIPv4Stack=true
 
 #
 # Enable and conigure SSH:
