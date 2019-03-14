@@ -36,6 +36,9 @@ fi
 
 eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
 
+# We want all ssh sesions to start in the /home directory
+echo "cd /home" >> /etc/profile
+
 # END: Configure /etc/profile
 
 # BEGIN: Process startup file / startup command, if any
