@@ -16,6 +16,16 @@ RUN apk add --update openssh-server \
         && echo "root:Docker!" | chpasswd \
         && apk update && apk add openrc \
         && rm -rf /var/cache/apk/* \
+        # Remove unnecessary services
+        && rm -f /etc/init.d/hwdrivers \
+                 /etc/init.d/hwclock \
+                 /etc/init.d/mtab \
+                 /etc/init.d/bootmisc \
+                 /etc/init.d/modules \
+                 /etc/init.d/modules-load \
+                 /etc/init.d/modloop \
+        # Can't do cgroups
+        && sed -i 's/\tcgroup_add_service/\t#cgroup_add_service/g' /lib/rc/sh/openrc-run.sh \
         && chmod 755 /bin/init_container.sh \
         && apk add --no-cache bash; \
 	    find ./bin/ -name '*.sh' -exec sed -ri 's|^#!/bin/sh$|#!/usr/bin/env bash|' '{}' +
