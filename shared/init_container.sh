@@ -123,12 +123,11 @@ then
     mkdir -p /home/site/wwwroot
 fi
 
-# check if app.jar is present and launch it. Otherwise, launch default.jar
+# check if app.jar is present and launch it. Otherwise, launch the parking page app.
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
-    echo Launching default.jar    
-    cp /tmp/webapps/default.jar /home/site/wwwroot/default.jar
-    CMD="java -jar /home/site/wwwroot/default.jar $SPRING_BOOT_PROPS"
+    echo Using the parking page app
+    JAR_PATH=/tmp/webapps/default.jar
 else
     # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
     # remote storage to a local folder
@@ -140,8 +139,8 @@ else
     else
         JAR_PATH=/home/site/wwwroot/app.jar
     fi
-    CMD="java $JAVA_OPTS -jar \"$JAR_PATH\" $SPRING_BOOT_PROPS"
 fi
 
+CMD="java $JAVA_OPTS -jar $JAR_PATH $SPRING_BOOT_PROPS"
 echo Running command: "$CMD"
 $CMD
