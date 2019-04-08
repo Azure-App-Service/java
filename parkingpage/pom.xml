@@ -59,6 +59,35 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>com.microsoft.azure</groupId>
+                <artifactId>azure-webapp-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                <deploymentType>jar</deploymentType>
+            
+                <!-- Just an example showing how to configure an appsetting -->
+                <appSettings>
+                    <property> 
+                    <name>JAVA_OPTS</name> 
+                    <value>-Dcustom.property=1</value> 
+                    </property> 
+                </appSettings>
+            
+                <resourceGroup>${RESOURCEGROUP_NAME}</resourceGroup>
+                <appName>${WEBAPP_NAME}</appName>
+                <region>west us</region> 
+
+                <linuxRuntime>jre8</linuxRuntime>
+
+                <!-- Uncomment this to use a custom container instead of linuxRuntime
+                    <containerSettings>
+                        <imageName>${IMAGE_NAME}</imageName>
+                    </containerSettings>
+                -->
+                </configuration>
+            </plugin>
         </plugins>
         <finalName>default</finalName>
     </build>
