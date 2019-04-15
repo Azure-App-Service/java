@@ -8,7 +8,9 @@ LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.c
 ENV PORT 80
 ENV SSH_PORT 2222
 
-ADD tmp/shared/default.jar /tmp/webapps/default.jar
+ADD tmp/shared/default.jar /tmp/appservice/default.jar
+ADD tmp/shared/azure.appservice.jar /tmp/appservice/azure.appservice.jar
+ADD tmp/shared/logging.properties /tmp/appservice/logging.properties
 ADD tmp/shared/init_container.sh /bin/init_container.sh
 ADD tmp/shared/sshd_config /etc/ssh/
 

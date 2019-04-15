@@ -24,26 +24,36 @@ sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 echo Starting ssh service...
 rc-service sshd start
 
-# WEBSITE_INSTANCE_ID will be defined uniquely for each worker instance while running in Azure.
-# During development it may not be defined, in that case  we set WEBSITE_INSTNACE_ID=dev.
-# This value is used by Spring log configuration
-if [ -z "$WEBSITE_INSTANCE_ID" ]
+# COMPUTERNAME will be defined uniquely for each worker instance while running in Azure.
+# If COMPUTERNAME isn't available, we assume that the container is running in a dev environment.
+# If running in dev environment, define required environment variables.
+if [ -z "$COMPUTERNAME" ]
 then
-    export WEBSITE_INSTANCE_ID=dev
+    export COMPUTERNAME=dev
+
+    # BEGIN: AzMon related environment variables
+    export HTTP_LOGGING_ENABLED=1
+    export WEBSITE_HOSTNAME=dev.appservice.com
+    export APPSETTING_WEBSITE_AZMON_ENABLED=True
+    # END: AzMon related environment variables
 fi
+
+# Variables in logging.properties aren't being evaluated, so explicitly update logging.properties with the appropriate values
+sed -i "s/__PLACEHOLDER_COMPUTERNAME__/$COMPUTERNAME/" /tmp/appservice/logging.properties
 
 # BEGIN: Configure Java / Spring Boot properties
 # Precedence order of properties can be found here: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
 
 SPRING_BOOT_PROPS=
 SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.port=$PORT"
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --logging.file=/home/LogFiles/Application/spring.$WEBSITE_INSTANCE_ID.log"
+SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --logging.file=/home/LogFiles/Application/spring.$COMPUTERNAME.log"
 # Increase the default size so that Easy Auth headers don't exceed the size limit
 SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.max-http-header-size=16384"
 
 echo "Using SPRING_BOOT_PROPS=$SPRING_BOOT_PROPS"
 
 export JAVA_OPTS="$JAVA_OPTS -noverify"
+export JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.config.file=/tmp/appservice/logging.properties"
 export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Djava.net.preferIPv4Stack=true"
 
 # END: Configure Java / Spring Boot properties
@@ -127,7 +137,7 @@ fi
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
     echo Using the parking page app
-    JAR_PATH=/tmp/webapps/default.jar
+    APP_JAR_PATH=/tmp/appservice/default.jar
 else
     # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
     # remote storage to a local folder
@@ -135,12 +145,12 @@ else
     then               
         mkdir -p /localcache/site/wwwroot
         cp /home/site/wwwroot/app.jar /localcache/site/wwwroot/app.jar
-        JAR_PATH=/localcache/site/wwwroot/app.jar
+        APP_JAR_PATH=/localcache/site/wwwroot/app.jar
     else
-        JAR_PATH=/home/site/wwwroot/app.jar
+        APP_JAR_PATH=/home/site/wwwroot/app.jar
     fi
 fi
 
-CMD="java $JAVA_OPTS -jar $JAR_PATH $SPRING_BOOT_PROPS"
+CMD="java -cp $APP_JAR_PATH:/tmp/appservice/azure.appservice.jar $JAVA_OPTS org.springframework.boot.loader.PropertiesLauncher $SPRING_BOOT_PROPS"
 echo Running command: "$CMD"
 $CMD
