@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>AzureAppService</groupId>
-    <artifactId>default</artifactId>
+    <artifactId>parkingpage</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -89,7 +89,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>default</finalName>
+        <finalName>parkingpage</finalName>
     </build>
 
 </project>

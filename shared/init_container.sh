@@ -137,7 +137,7 @@ fi
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
     echo Using the parking page app
-    APP_JAR_PATH=/tmp/appservice/default.jar
+    APP_JAR_PATH=/tmp/appservice/parkingpage.jar
 else
     # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
     # remote storage to a local folder
