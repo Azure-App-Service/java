@@ -44,13 +44,12 @@ sed -i "s/__PLACEHOLDER_COMPUTERNAME__/$COMPUTERNAME/" /tmp/appservice/logging.p
 # BEGIN: Configure Java / Spring Boot properties
 # Precedence order of properties can be found here: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
 
-SPRING_BOOT_PROPS=
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.port=$PORT"
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --logging.file=/home/LogFiles/Application/spring.$COMPUTERNAME.log"
+SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --server.port=$PORT"
+SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --logging.file=/home/LogFiles/Application/spring.$COMPUTERNAME.log"
 # Increase the default size so that Easy Auth headers don't exceed the size limit
-SPRING_BOOT_PROPS="$SPRING_BOOT_PROPS --server.max-http-header-size=16384"
+SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --server.max-http-header-size=16384"
 
-echo "Using SPRING_BOOT_PROPS=$SPRING_BOOT_PROPS"
+echo "Using SPRINGBOOT_OPTS=$SPRINGBOOT_OPTS"
 
 export JAVA_OPTS="$JAVA_OPTS -noverify"
 export JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.config.file=/tmp/appservice/logging.properties"
@@ -154,6 +153,6 @@ else
     fi
 fi
 
-CMD="java -cp $APP_JAR_PATH:/tmp/appservice/azure.appservice.jar $JAVA_OPTS org.springframework.boot.loader.PropertiesLauncher $SPRING_BOOT_PROPS"
+CMD="java -cp $APP_JAR_PATH:/tmp/appservice/azure.appservice.jar $JAVA_OPTS org.springframework.boot.loader.PropertiesLauncher $SPRINGBOOT_OPTS"
 echo Running command: "$CMD"
 $CMD
