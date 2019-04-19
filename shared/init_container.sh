@@ -130,11 +130,6 @@ fi
 
 # END: Process startup file / startup command, if any
 
-if [ ! -d /home/site/wwwroot ]
-then
-    mkdir -p /home/site/wwwroot
-fi
-
 # check if app.jar is present and launch it. Otherwise, launch the parking page app.
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
