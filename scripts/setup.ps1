@@ -22,14 +22,14 @@ function setup
         'jre8-alpine'
         {
             $content = (Get-Content -path $dockerFileTemplatePath -Raw) `
-                -replace '__PLACEHOLDER_BASEIMAGE__','mcr.microsoft.com/java/jre-headless:8u202-zulu-alpine'
+                -replace '__PLACEHOLDER_BASEIMAGE__','mcr.microsoft.com/java/jre-headless:8u212-zulu-alpine-with-tools'
             break
         }
 
         'java11-alpine'
         {
             $content = (Get-Content -path $dockerFileTemplatePath -Raw) `
-                -replace '__PLACEHOLDER_BASEIMAGE__','mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine'
+                -replace '__PLACEHOLDER_BASEIMAGE__','mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine-with-tools'
             break
         }
     }
