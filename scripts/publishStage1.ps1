@@ -24,8 +24,8 @@ function Build
     $image = GetImage -version $version -timestamp $timestamp
 
     Write-Host -ForegroundColor Green Building $image
-    Write-Host -ForegroundColor Green docker build --no-cache -t $image $directory
-    docker build --no-cache -t $image $directory
+    Write-Host -ForegroundColor Green docker build --pull --no-cache -t $image $directory
+    docker build --pull --no-cache -t $image $directory
 }
 
 function Publish
