@@ -47,3 +47,4 @@ Desired enhancements to this suite of tests are:
 1. Make tests run as part of the `integration-test` phase on Maven
 1. Generate Surefire/Failsafe reports of all modules
 1. Test other images (e.g. `java11`)
+1. Test deployment to App Service using the Maven Plugin
