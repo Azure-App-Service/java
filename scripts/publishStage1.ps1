@@ -22,10 +22,14 @@ function Build
     .\scripts\setup.ps1 -version $version
 
     $image = GetImage -version $version -timestamp $timestamp
+    $gitcommit=(git log -1 --pretty=%H)
 
     Write-Host -ForegroundColor Green Building $image
-    Write-Host -ForegroundColor Green docker build --pull --no-cache -t $image $directory
-    docker build --pull --no-cache -t $image $directory
+    $buildcmd = "docker build --pull --no-cache --build-arg GIT_COMMIT=$gitcommit -t $image $directory"
+    Write-Host -ForegroundColor Green $buildcmd
+
+    # Run the build command
+    Invoke-Expression -Command $buildcmd
 }
 
 function Publish

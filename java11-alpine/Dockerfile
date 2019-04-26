@@ -2,8 +2,14 @@
 ### ***DO NOT EDIT*** This is an auto-generated file ###
 ########################################################
 ARG BASE_IMAGE=mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine-with-tools
-FROM mcr.microsoft.com/java/jre-headless:11u2-zulu-alpine-with-tools
+ARG GIT_COMMIT=unspecified
+FROM $BASE_IMAGE
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
+
+# Re-define ARG to make the build argument available for use in the rest of the Dockerfile
+ARG GIT_COMMIT
+
+ENV GIT_COMMIT $GIT_COMMIT
 
 ENV PORT 80
 ENV SSH_PORT 2222
