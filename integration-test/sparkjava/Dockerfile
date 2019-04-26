@@ -1,0 +1,3 @@
+FROM appsvc/java:8-jre8_0000000000
+
+COPY target/${project.build.finalName}.jar /home/site/wwwroot/app.jar

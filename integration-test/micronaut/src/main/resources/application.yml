@@ -1,0 +1,5 @@
+micronaut:
+  application:
+    name: micronaut-1.x
+  server:
+    port: $PORT
