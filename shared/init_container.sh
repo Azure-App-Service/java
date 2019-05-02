@@ -41,21 +41,31 @@ fi
 # Variables in logging.properties aren't being evaluated, so explicitly update logging.properties with the appropriate values
 sed -i "s/__PLACEHOLDER_COMPUTERNAME__/$COMPUTERNAME/" /tmp/appservice/logging.properties
 
-# BEGIN: Configure Java / Spring Boot properties
+# BEGIN: Configure Spring Boot properties
 # Precedence order of properties can be found here: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html
 
-SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --server.port=$PORT"
-SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --logging.file=/home/LogFiles/Application/spring.$COMPUTERNAME.log"
+export SERVER_PORT=$PORT
 # Increase the default size so that Easy Auth headers don't exceed the size limit
-SPRINGBOOT_OPTS="$SPRINGBOOT_OPTS --server.max-http-header-size=16384"
+export SERVER_MAXHTTPHEADERSIZE=16384
+export LOGGING_FILE=/home/LogFiles/Application/spring.$COMPUTERNAME.log
 
-echo "Using SPRINGBOOT_OPTS=$SPRINGBOOT_OPTS"
+# END: Configure Spring Boot properties
+
+# BEGIN: Configure Java properties
 
 export JAVA_OPTS="$JAVA_OPTS -noverify"
-export JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.config.file=/tmp/appservice/logging.properties"
 export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Djava.net.preferIPv4Stack=true"
 
-# END: Configure Java / Spring Boot properties
+# *** NOTE: WEBSITE_AZMON_PREVIEW_ENABLED is for Spring Boot / AzMon internal testing purposes only and will be removed soon ***
+if [[ "$WEBSITE_AZMON_PREVIEW_ENABLED" = "1" ||  "$WEBSITE_AZMON_PREVIEW_ENABLED" = "true" ]]
+then
+    echo Performing AzMon configuration
+    export JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.config.file=/tmp/appservice/logging.properties"
+else
+    echo Skipping AzMon configuration
+fi
+
+# END: Configure Java properties
 
 # BEGIN: Configure /etc/profile
 
@@ -148,6 +158,14 @@ else
     fi
 fi
 
-CMD="java -cp $APP_JAR_PATH:/tmp/appservice/azure.appservice.jar $JAVA_OPTS org.springframework.boot.loader.PropertiesLauncher $SPRINGBOOT_OPTS"
+
+# *** NOTE: WEBSITE_AZMON_PREVIEW_ENABLED is for Spring Boot / AzMon internal testing purposes only and will be removed soon ***
+if [[ "$WEBSITE_AZMON_PREVIEW_ENABLED" = "1" ||  "$WEBSITE_AZMON_PREVIEW_ENABLED" = "true" ]]
+then
+    CMD="java -cp $APP_JAR_PATH:/tmp/appservice/azure.appservice.jar $JAVA_OPTS org.springframework.boot.loader.PropertiesLauncher $SPRINGBOOT_OPTS"
+else
+    CMD="java $JAVA_OPTS -jar $APP_JAR_PATH"
+fi
+
 echo Running command: "$CMD"
 $CMD
