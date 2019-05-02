@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.4.RELEASE</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.microsoft.appservice</groupId>
+	<artifactId>springboot-2.x</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<name>springboot-2.x</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.30.0</version>
+				<configuration>
+					<showLogs>true</showLogs>
+					<logStdout>true</logStdout>
+					<verbose>all</verbose>
+					<containerNamePattern>%n-%t</containerNamePattern>
+					<images>
+						<image>
+							<name>appsvc-${project.artifactId}</name>
+							<run>
+								<ports>8080:80</ports>
+								<wait>
+									<http>
+										<url>http://localhost:8080</url>
+										<method>get</method>
+									</http>
+								</wait>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>build-image</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+						<phase>
+							package
+						</phase>
+					</execution>
+					<execution>
+						<id>test-image</id>
+						<goals>
+							<goal>start</goal>
+							<goal>stop</goal>
+						</goals>
+						<phase>
+							integration-test
+						</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
