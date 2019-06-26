@@ -24,6 +24,9 @@ sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 echo Starting ssh service...
 rc-service sshd start
 
+# Enable case-insensitive string matching
+shopt -s nocasematch
+
 # COMPUTERNAME will be defined uniquely for each worker instance while running in Azure.
 # If COMPUTERNAME isn't available, we assume that the container is running in a dev environment.
 # If running in dev environment, define required environment variables.
@@ -140,24 +143,24 @@ fi
 
 # END: Process startup file / startup command, if any
 
-# check if app.jar is present and launch it. Otherwise, launch the parking page app.
+# If no app is published at /home/site/wwwroot/app.jar, use the parking page app.
+# If an app is published, the default behavior is to copy the app to a local location, unless:
+# 1. WEBSITE_SKIP_LOCAL_COPY is defined to 1 or TRUE, OR,
+# 2. Local cache is enabled, in which case making a local copy again is unnecessary.
 if [ ! -f /home/site/wwwroot/app.jar ]
 then
-    echo Using the parking page app
     APP_JAR_PATH=/tmp/appservice/parkingpage.jar
+    echo "Using parking page app with APP_JAR_PATH=$APP_JAR_PATH"
+elif [[ "$WEBSITE_LOCAL_CACHE_OPTION" = "Always" || "$WEBSITE_SKIP_LOCAL_COPY" = "1"  || "$WEBSITE_SKIP_LOCAL_COPY" = "true" ]]
+then
+    APP_JAR_PATH=/home/site/wwwroot/app.jar
+    echo "No local copy needed. APP_JAR_PATH=$APP_JAR_PATH"
 else
-    # If the WEBSITE_LOCAL_CACHE_OPTION application setting is set to Always, copy the jar from the 
-    # remote storage to a local folder
-    if [ "$APPSETTING_WEBSITE_LOCAL_CACHE_OPTION" = "Always" ]
-    then               
-        mkdir -p /localcache/site/wwwroot
-        cp /home/site/wwwroot/app.jar /localcache/site/wwwroot/app.jar
-        APP_JAR_PATH=/localcache/site/wwwroot/app.jar
-    else
-        APP_JAR_PATH=/home/site/wwwroot/app.jar
-    fi
+    mkdir -p /local/site
+    cp -r /home/site/wwwroot /local/site/wwwroot
+    APP_JAR_PATH=/local/site/wwwroot/app.jar
+    echo "Made a local copy of the app and using APP_JAR_PATH=$APP_JAR_PATH"
 fi
-
 
 # *** NOTE: WEBSITE_AZMON_PREVIEW_ENABLED is for Spring Boot / AzMon internal testing purposes only and will be removed soon ***
 if [[ "$WEBSITE_AZMON_PREVIEW_ENABLED" = "1" ||  "$WEBSITE_AZMON_PREVIEW_ENABLED" = "true" ]]
